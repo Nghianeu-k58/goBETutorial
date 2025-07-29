@@ -1,0 +1,121 @@
+syntax = "proto3";
+
+package go_be_tutorial;
+
+option go_package = "github.com/Nghianeu-k58/goBETutorial/go_be_tutorial"; // Adjust as needed for your language
+
+enum DownloadType {
+    UndefineType = 0;
+    HTTP = 1;
+}
+
+enum DownloadStatus {
+    UndefineStatus = 0;
+    Pending = 1;
+    Downloading = 2;
+    Failed = 3;
+    Sucessful = 4;
+}
+
+
+
+// gRPC service definition
+service DownloadService {
+    rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse);
+    rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+    rpc CreateDownloadTask(CreateDownloadTaskRequest) returns (CreateDownloadTaskResponse);
+    rpc GetDownloadTaskList(GetDownloadTaskListRequest) returns (GetDownloadTaskListResponse);
+    rpc UpdateDownloadTask(UpdateDownloadTaskRequest) returns (UpdateDownloadTaskResponse);
+    rpc DeleteDownloadTask(DeleteDownloadTaskRequest) returns (DeleteDownloadTaskResponse);
+    rpc GetDownloadTaskFile(GetDownloadTaskFileRequest) returns (stream GetDownloadTaskFileResponse);
+}
+
+
+message User {
+    uint64 id = 1;
+    string username = 2;
+}
+
+
+message DownloadTask {
+    uint64 id = 1;
+    User of_user = 2;
+    DownloadType download_type = 3;
+    string url = 4;
+    DownloadStatus download_status = 5;
+}
+
+
+// Empty request/response messages for all endpoints
+// 1. Create account
+message CreateAccountRequest {
+    string username = 1;
+    string password = 2;
+}
+
+message CreateAccountResponse {
+    uint64 user_id = 1;
+}
+
+// 2. Login
+message CreateSessionRequest {
+    string username = 1;
+    string password = 2;
+}
+
+message CreateSessionResponse {
+    string token = 1;
+    DownloadType download_type = 2;
+    string url = 3;
+}
+
+// 3. Create task download
+message CreateDownloadTaskRequest {
+    string token = 1;
+}
+
+message CreateDownloadTaskResponse {
+    DownloadTask download_task = 1;
+}
+
+// 4. Get Task Download
+message GetDownloadTaskListRequest {
+    string token = 1;
+    uint64 ofset = 2;
+    uint64 limit = 3;
+}
+
+message GetDownloadTaskListResponse {
+    repeated DownloadTask download_task_list = 1;
+    uint64 total_download_task_count = 2;
+}
+
+// 5. Update task download
+message UpdateDownloadTaskRequest {
+    string token = 1;
+    uint64 download_task_id = 2;
+    string url = 3;
+}
+
+message UpdateDownloadTaskResponse {
+    DownloadTask download_task = 1;
+}
+
+// 6. Delete Task
+message DeleteDownloadTaskRequest {
+    string token = 1;
+}
+
+message DeleteDownloadTaskResponse {}
+
+// 7. Get File
+message GetDownloadTaskFileRequest {
+    string token = 1;
+    uint64 download_task_id = 2;
+}
+
+message GetDownloadTaskFileResponse {
+    bytes data = 1;
+}
+
+
